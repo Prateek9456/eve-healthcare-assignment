@@ -17,8 +17,16 @@ Backend service for diagnostic test bookings and simulated payments, built for t
 docker compose up --build
 ```
 
-API: http://localhost:8000  
-Swagger docs: http://localhost:8000/docs
+### URLs (after the server is running)
+
+| Resource | URL |
+|----------|-----|
+| API base | http://localhost:8000 |
+| Health check | http://localhost:8000/health |
+| Swagger UI (interactive docs) | http://localhost:8000/docs |
+| ReDoc (alternative docs) | http://localhost:8000/redoc |
+
+> **Note:** The root URL (`http://localhost:8000/`) returns `404 Not Found` — this is expected. Use `/health` or `/docs` instead.
 
 ## Local Setup (without Docker)
 
@@ -41,6 +49,10 @@ copy .env.example .env
 ```bash
 uvicorn app.main:app --reload
 ```
+
+6. Open in browser:
+   - Health check: http://localhost:8000/health
+   - Swagger docs: http://localhost:8000/docs
 
 ## Run Tests
 
