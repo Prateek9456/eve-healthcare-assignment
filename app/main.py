@@ -3,7 +3,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.openapi.docs import get_redoc_html
+from fastapi.responses import HTMLResponse, JSONResponse
 
 from app.database import Base, engine
 from app.exceptions import AppError
@@ -26,6 +27,7 @@ app = FastAPI(
     description="Backend service for diagnostic test bookings and simulated payments.",
     version="1.0.0",
     lifespan=lifespan,
+    redoc_url=None,
 )
 
 app.include_router(auth.router)
@@ -42,6 +44,15 @@ async def app_error_handler(_: Request, exc: AppError) -> JSONResponse:
 @app.exception_handler(RequestValidationError)
 async def validation_error_handler(_: Request, exc: RequestValidationError) -> JSONResponse:
     return JSONResponse(status_code=422, content={"detail": exc.errors()})
+
+
+@app.get("/redoc", include_in_schema=False)
+def redoc() -> HTMLResponse:
+    return get_redoc_html(
+        openapi_url="/openapi.json",
+        title="EVE Healthcare Diagnostics API - ReDoc",
+        redoc_js_url="https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.js",
+    )
 
 
 @app.get("/health", tags=["Health"])
